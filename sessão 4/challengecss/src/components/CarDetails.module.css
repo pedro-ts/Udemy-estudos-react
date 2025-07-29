@@ -1,0 +1,14 @@
+.titulo{
+text-align: center;
+color: white;
+background-color: black;
+font-weight: bold;
+padding: 10px;
+}
+.cor{
+    text-align: center;
+color: gold;
+background-color: black;
+font-weight: bold;
+padding: 20px;
+}

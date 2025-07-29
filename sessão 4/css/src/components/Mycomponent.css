@@ -1,0 +1,9 @@
+p{
+    color: green;
+    background-color: black;
+}
+.component-p{
+    color: goldenrod;
+    background-color: grey;
+    font-weight: bold;
+}
