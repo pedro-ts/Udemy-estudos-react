@@ -1,15 +1,15 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 //4 custom hook
-import {useFetch} from "./hooks/useFetch";
+import { useFetch } from "./hooks/useFetch";
+import DeleteButton from "./components/home/DeleteButton";
 
 function App() {
   const [products, setProducts] = useState([]);
   const url = "http://localhost:3000/products";
 
   //4 custom hook
-  const { data:itens, httpConfig } = useFetch(url);
-
+  const { data: itens, httpConfig, loading, error } = useFetch(url);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -47,23 +47,57 @@ function App() {
   //   setName("");
   //   setPrice("");
   // };
-//5 refatorando post
+  //5 refatorando post
   const handleSubmit = (e) => {
     e.preventDefault();
     const product = { name, price: Number(price) };
-    httpConfig(product, "POST")
+    httpConfig(product, "POST");
     setName("");
     setPrice("");
+  };
+  const handleRemove = (id) =>{
+    httpConfig(id, "DELETE")
   }
 
   return (
     <>
       <h1>Lista de produtos</h1>
+      {/* 6 loading */}
+      {loading === true && <p>Careegando dados...</p>}
+      {error !== null && <p>{error}</p>}
       <ul>
         {itens.map((product) => (
-          <li key={product.id}>
-            {product.name} - R${product.price}
-          </li>
+          <div
+            key={product.id}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <div style={{ marginRight: "10px" }}>
+              <li
+                style={{
+                  background: "#fff",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  padding: "16px",
+                  marginBottom: "12px",
+                  minWidth: "220px",
+                  maxWidth: "500px",
+                  width: "350px",
+                  listStyle: "none",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  color: "black",
+                  fontWeight: "bold",
+                }}
+              >
+                <span>
+                  {product.name} - R${product.price}
+                </span>
+                <DeleteButton id={product.id} handleRemove={handleRemove} />
+              </li>
+            </div>
+          </div>
         ))}
       </ul>
 
@@ -87,8 +121,9 @@ function App() {
               onChange={(e) => setPrice(e.target.value)}
             />
           </label>
-
-          <input type="submit" value="criar" />
+          {/* 7 state de loading no post */}
+          {loading == true && <input type="submit" disabled value="Aguarde" />}
+          {loading == false && <input type="submit" value="criar" />}
         </form>
       </div>
     </>

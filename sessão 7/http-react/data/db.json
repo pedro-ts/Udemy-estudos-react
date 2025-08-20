@@ -1,0 +1,64 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Camisa",
+      "price": 59.9
+    },
+    {
+      "id": "2",
+      "name": "Calça vermelha",
+      "price": 90
+    },
+    {
+      "id": "3",
+      "name": "Boné aba reta",
+      "price": 29.9
+    },
+    {
+      "id": "ff77",
+      "name": "Calça jeans",
+      "price": "50"
+    },
+    {
+      "id": "13bb",
+      "name": "Capa de chuva",
+      "price": "50.50"
+    },
+    {
+      "id": "e6db",
+      "name": "Touca",
+      "price": 29.9
+    },
+    {
+      "id": "d19a",
+      "name": "Camisa",
+      "price": 20
+    },
+    {
+      "id": "016e",
+      "name": "Jaqueta",
+      "price": 300
+    },
+    {
+      "id": "1a5a",
+      "name": "Par de meia",
+      "price": 15
+    },
+    {
+      "id": "b719",
+      "name": "Relógio",
+      "price": 100
+    },
+    {
+      "id": "578a",
+      "name": "Blusa do batman",
+      "price": 120
+    },
+    {
+      "id": "5cab",
+      "name": "Roupão",
+      "price": 150
+    }
+  ]
+}

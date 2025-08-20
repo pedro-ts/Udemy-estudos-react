@@ -1,58 +1,79 @@
-import {useState, useEffect} from "react";
-//4 custom hook
+// hooks/useFetch.js
+import { useState, useEffect } from "react";
 
-export const useFetch = (url) =>{
-    // Dados e variaveis
-  const [data, setData] = useState([]); // criamos a varivel que será preenchida com o que queremos
-    //5 refatorando o post
-    const [config,setConfig] = useState();
-    const [method, setMethod] = useState();
-    const [callFetch, setCallFetch] = useState(false);
+export const useFetch = (url) => {
+  const [data, setData] = useState([]);
+  const [config, setConfig] = useState(null);
+  const [method, setMethod] = useState(null);
+  const [callFetch, setCallFetch] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [itemId, setItemId] = useState(null);
 
-
-// Cria o texto da configuração padrão usada nas requisições
-    const httpConfig = (data, method) => { //a variavel config é preenchida se o metodo for post
-        if(method === "POST"){
-            setConfig({
-                method: "post",
-                headers: {
-                    "content-type" : "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-            setMethod(method)
-        }
+  // monta opções para POST/DELETE
+  const httpConfig = (payload, methodArg) => {
+    if (methodArg === "POST") {
+      setConfig({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      setMethod("POST");
     }
+    if (methodArg === "DELETE") {
+      setConfig({
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      setMethod("DELETE");
+      setItemId(payload); // aqui payload é o id
+    }
+  };
 
+  // GET inicial e quando callFetch alterna
   useEffect(() => {
     const fetchData = async () => {
-      //fazemos uma função assincrona
-      const res = await fetch(url); //fazemos a requisição
-      const json = await res.json(); // transformamos a resposta em json
-
-      setData(json); //passamos a resposta para a variavel criada anteriormente
+      setLoading(true);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        setData(json);
+        setError(null);
+      } catch (e) {
+        setError("Houve algum erro para carregar os dados");
+      } finally {
+        setLoading(false);
+      }
     };
-
-    fetchData(); //executamos a função assincrona
+    fetchData();
   }, [url, callFetch]);
 
-//5 refatorando post
-useEffect(()=>{
-
-    if(method === "POST"){
-        const httpRequest = async()=>{
-            let fetchOptions = [url, config];
-            const res = await fetch(...fetchOptions)
-
-            const json = await res.json();
-
-            setCallFetch(json)
+  // POST/DELETE
+  useEffect(() => {
+    const httpRequest = async () => {
+      setLoading(true);
+      try {
+        if (method === "POST") {
+          const res = await fetch(url, config);
+          await res.json(); // opcional usar retorno
         }
-        httpRequest();
-    }
+        if (method === "DELETE") {
+          const deleteUrl = `${url}/${itemId}`;
+          const res = await fetch(deleteUrl, config);
+          await res.json();
+        }
+        setError(null);
+        setCallFetch((prev) => !prev); // força novo GET
+      } catch {
+        setError("Houve algum erro ao enviar os dados");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (method) httpRequest();
+  }, [config, method, url, itemId]);
 
-}, [config, method, url])
-
-  return { data, httpConfig }; //retornaremos o que foi salvo na variavel "data"
-}
+  return { data, httpConfig, loading, error };
+};
